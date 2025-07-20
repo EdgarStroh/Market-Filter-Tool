@@ -1,9 +1,10 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import '../App.css'; // Pfad anpassen
+
 
 interface Company {
   symbol: string;
@@ -29,8 +30,8 @@ export const BatchAnalysisControls = ({
   const handleBatchAnalysis = async () => {
     if (!letterFilter.trim()) {
       toast({
-        title: "Buchstabe erforderlich",
-        description: "Bitte geben Sie einen Buchstaben ein, um Unternehmen zu filtern (A-Z)",
+        title: "Letter required",
+        description: "Please enter a letter to filter companies (A-Z)",
         variant: "destructive",
       });
       return;
@@ -39,54 +40,54 @@ export const BatchAnalysisControls = ({
     const letter = letterFilter.toUpperCase().trim();
     if (letter.length !== 1 || !/[A-Z]/.test(letter)) {
       toast({
-        title: "Ungültiger Buchstabe",
-        description: "Bitte geben Sie einen einzelnen Buchstaben ein (A-Z)",
+        title: "Invalid letter",
+        description: "Please enter a single letter (A-Z)",
         variant: "destructive",
       });
       return;
     }
 
-    const companiesWithLetter = companies.filter(company => 
+    const companiesWithLetter = companies.filter((company) =>
       company.symbol.startsWith(letter)
     );
 
     if (companiesWithLetter.length === 0) {
       toast({
-        title: "Keine Unternehmen gefunden",
-        description: `Keine Unternehmen gefunden, die mit dem Buchstaben "${letter}" beginnen`,
+        title: "No companies found",
+        description: `No companies found starting with the letter "${letter}"`,
         variant: "destructive",
       });
       return;
     }
 
     setIsBatchAnalyzing(true);
-    
+
     toast({
-      title: "Stapelanalyse gestartet",
-      description: `Analysiere ${companiesWithLetter.length} Unternehmen, die mit "${letter}" beginnen...`,
+      title: "Batch analysis started",
+      description: `Analyzing ${companiesWithLetter.length} companies starting with "${letter}"...`,
     });
 
     try {
-      const { processBatchAnalysis } = await import("@/utils/batchAnalysisService");
-      
-      await processBatchAnalysis(companiesWithLetter, (progress) => {
-        
-      });
+      const { processBatchAnalysis } = await import(
+        "@/utils/batchAnalysisService"
+      );
+
+      await processBatchAnalysis(companiesWithLetter, (progress) => {});
 
       toast({
-        title: "Stapelanalyse abgeschlossen",
-        description: `Erfolgreich ${companiesWithLetter.length} Unternehmen analysiert, die mit "${letter}" beginnen`,
+        title: "Batch analysis completed",
+        description: `Successfully analyzed ${companiesWithLetter.length} companies starting with "${letter}"`,
       });
 
       if (onBatchAnalysisComplete) {
         onBatchAnalysisComplete();
       }
-
     } catch (error) {
-      console.error('Stapelanalyse fehlgeschlagen:', error);
+      console.error("Batch analysis failed:", error);
       toast({
-        title: "Analyse fehlgeschlagen",
-        description: "Einige Unternehmen konnten nicht analysiert werden. Details in der Konsole.",
+        title: "Analysis failed",
+        description:
+          "Some companies could not be analyzed. See console for details.",
         variant: "destructive",
       });
     } finally {
@@ -98,28 +99,30 @@ export const BatchAnalysisControls = ({
     <div className="flex gap-2 max-w-md">
       <Input
         type="text"
-        placeholder="Buchstabe (A-Z)"
+        placeholder="Letter (A-Z)"
         value={letterFilter}
-        onChange={(e) => setLetterFilter(e.target.value.toUpperCase().slice(0, 1))}
-        className="w-24"
+        onChange={(e) =>
+          setLetterFilter(e.target.value.toUpperCase().slice(0, 1))
+        }
+        className="w-24 disappear"
         maxLength={1}
       />
-      <Button 
-        onClick={handleBatchAnalysis} 
+      <Button
+        onClick={handleBatchAnalysis}
         disabled={isBatchAnalyzing || !letterFilter.trim()}
-        className="flex-1"
+        className="flex-1 disappear"
         variant="outline"
-        title="Unternehmen mit diesem Buchstaben analysieren"
+        title="Analyze companies with this letter"
       >
         {isBatchAnalyzing ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-            Analysiere...
+            Analyzing...
           </>
         ) : (
           <>
             <Zap className="h-4 w-4 mr-2" />
-            Buchstabe analysieren
+            Analyze Letter
           </>
         )}
       </Button>

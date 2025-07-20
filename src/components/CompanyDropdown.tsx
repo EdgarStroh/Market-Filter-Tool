@@ -1,4 +1,3 @@
-
 import { useToast } from "@/hooks/use-toast";
 
 interface Company {
@@ -39,15 +38,15 @@ export const CompanyDropdown = ({
   }
 
   // FIX: Show filtered companies, or first 100 companies if no search term
-  const displayCompanies = searchTerm.length > 0 ? filteredCompanies : companies.slice(0, 100);
+  const displayCompanies =
+    searchTerm.length > 0 ? filteredCompanies : companies.slice(0, 100);
 
   return (
     <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-md shadow-lg z-50 max-h-96 overflow-y-auto">
       <div className="px-4 py-2 text-sm text-muted-foreground border-b border-border bg-secondary/50">
-        {searchTerm.length > 0 
-          ? `${filteredCompanies.length} gefilterte Ergebnisse von ${companies.length} Unternehmen`
-          : `Zeige erste 100 von ${companies.length} Unternehmen`
-        }
+        {searchTerm.length > 0
+          ? `${filteredCompanies.length} filtered results out of ${companies.length} companies`
+          : `Showing first 100 of ${companies.length} companies`}
       </div>
       {displayCompanies.map((company, index) => (
         <button
@@ -58,15 +57,19 @@ export const CompanyDropdown = ({
           <div className="flex justify-between items-center">
             <div className="flex-1">
               <div className="font-medium">{company.symbol}</div>
-              <div className="text-sm text-muted-foreground">{company.name}</div>
+              <div className="text-sm text-muted-foreground">
+                {company.name}
+              </div>
             </div>
-            <div className="text-xs text-muted-foreground ml-2">{company.exchange}</div>
+            <div className="text-xs text-muted-foreground ml-2">
+              {company.exchange}
+            </div>
           </div>
         </button>
       ))}
       {searchTerm.length > 0 && filteredCompanies.length === 0 && (
         <div className="px-4 py-3 text-sm text-muted-foreground text-center">
-          Keine Unternehmen gefunden für "{searchTerm}"
+          No companies found for "{searchTerm}"
         </div>
       )}
     </div>

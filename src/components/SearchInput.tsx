@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronDown, ChevronUp, Trophy, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
+import "../App.css"; // Pfad anpassen
 interface Company {
   symbol: string;
   name: string;
@@ -41,14 +40,15 @@ export const SearchInput = ({
   const handleSearch = () => {
     if (searchTerm.trim()) {
       const exactMatch = companies.find(
-        company => company.symbol.toLowerCase() === searchTerm.trim().toLowerCase()
+        (company) =>
+          company.symbol.toLowerCase() === searchTerm.trim().toLowerCase()
       );
       if (exactMatch) {
         onCompanySelect(exactMatch);
       } else {
         toast({
-          title: "Unternehmen nicht gefunden",
-          description: "Bitte wählen Sie ein Unternehmen aus den Dropdown-Vorschlägen",
+          title: "Company not found",
+          description: "Please select a company from the dropdown suggestions",
           variant: "destructive",
         });
       }
@@ -75,7 +75,7 @@ export const SearchInput = ({
               setShowDropdown(true);
             }
           }}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyPress={(e) => e.key === "Enter" && handleSearch()}
           onFocus={() => {
             if (searchTerm.length > 1) {
               setShowDropdown(true);
@@ -89,7 +89,7 @@ export const SearchInput = ({
           size="sm"
           onClick={toggleDropdown}
           className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
-          title="Dropdown anzeigen/verbergen"
+          title="Dropdown show/hide"
         >
           {showDropdown ? (
             <ChevronUp className="h-4 w-4" />
@@ -102,11 +102,12 @@ export const SearchInput = ({
         <Trophy className="h-4 w-4 mr-2" />
         Rankings
       </Button>
-      <Button 
-        onClick={onAnalyzeAll} 
+      <Button
+        onClick={onAnalyzeAll}
         disabled={isAnalyzingAll || companies.length === 0}
-        title="Alle Unternehmen analysieren"
+        title="Analyze all companies"
         variant="outline"
+        className="disappear"
       >
         {isAnalyzingAll ? (
           <>
