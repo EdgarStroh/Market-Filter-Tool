@@ -31,9 +31,8 @@
 ## 📁 Technologies Used
 
 - **Frontend**: React + TypeScript + Tailwind CSS
-- **Backend**: (Optional — insert if any used, e.g. Firebase, Node.js)
+- **Backend**: Firebase
 - **Data Source**: Paid financial API
-- **Visualization**: Chart libraries (optional — insert if used)
 
 ---
 
