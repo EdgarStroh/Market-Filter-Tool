@@ -118,15 +118,15 @@ export const RankingsList = ({ listType, title, description }: RankingsListProps
         <p className="text-sm text-muted-foreground">{description}</p>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+       <div className="space-y-3 max-h-96 overflow-y-auto overflow-x-clip">
           {results.map((company, index) => (
-            <div key={`${company.symbol}-${company.analysisDate}`} className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-8 text-center">
+            <div key={`${company.symbol}-${company.analysisDate}`} className="flex items-center gap-1 sm:gap-3">
+              <div className="flex-shrink-0 w-4 sm:w-8 text-center">
                 <span className="text-sm font-semibold text-muted-foreground">
                   {index + 1}.
                 </span>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 overflow-x-auto">
                 <CompanyRankingCard
                   company={company}
                   rank={index}

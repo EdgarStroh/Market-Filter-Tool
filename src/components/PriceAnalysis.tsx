@@ -185,7 +185,7 @@ export const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ data }) => {
                 return (
                   <Tooltip key={analyst.name}>
                     <TooltipTrigger asChild>
-                      <div className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-help">
+                      <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-help">
                         <div className="flex items-center gap-3">
                           <analyst.icon className="h-5 w-5 text-muted-foreground" />
                           <div>

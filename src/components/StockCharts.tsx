@@ -87,9 +87,10 @@ export const StockCharts = ({ symbol, data }: StockChartsProps) => {
           </TooltipProvider>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        {children}
-      </CardContent>
+<CardContent className="overflow-auto">
+  {children}
+</CardContent>
+
     </Card>
   );
 
@@ -162,7 +163,7 @@ export const StockCharts = ({ symbol, data }: StockChartsProps) => {
           title={t('charts.profitabilityTrends')}
           tooltipText="This line chart tracks Return on Equity (ROE) and Return on Assets (ROA) over time, key indicators of management efficiency and profitability."
         >
-          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] lg:h-[280px]">
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] lg:h-[280px] overflow-auto">
             <LineChart data={profitabilityData}>
               <XAxis 
                 dataKey="year" 

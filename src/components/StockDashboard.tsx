@@ -219,7 +219,7 @@ export const StockDashboard = ({ symbol, onAnalysisComplete, onClose }: StockDas
 
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:relative md:inset-auto md:z-auto md:bg-transparent md:backdrop-blur-none">
-      <div className="absolute inset-4 md:relative md:inset-auto overflow-auto">
+      <div className="absolute inset-0 md:relative md:inset-auto overflow-auto">
         <div className="space-y-6 h-full md:h-auto">
           {/* Mobile Close Button */}
           {onClose && (
