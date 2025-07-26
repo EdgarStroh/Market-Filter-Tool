@@ -121,7 +121,7 @@ export const RankingsList = ({ listType, title, description }: RankingsListProps
        <div className="space-y-3 max-h-96 overflow-y-auto overflow-x-clip">
           {results.map((company, index) => (
             <div key={`${company.symbol}-${company.analysisDate}`} className="flex items-center gap-1 sm:gap-3">
-              <div className="flex-shrink-0 w-4 sm:w-8 text-center">
+              <div className="flex-shrink-0 w-5 sm:w-8 text-center">
                 <span className="text-sm font-semibold text-muted-foreground">
                   {index + 1}.
                 </span>
