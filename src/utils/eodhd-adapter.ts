@@ -364,8 +364,9 @@ export const convertEODHDToStockData = (symbol: string, fundamentals: EODHDFunda
     workingCapital: workingCapital,
     
     // Dividends & Returns
-    dividendYield: parse(highlights.DividendYield) ? 
-                  parse(highlights.DividendYield)! * 100 : 0,
+    dividendYield: parse(fundamentals.SplitsDividends?.ForwardAnnualDividendYield) ? 
+                  parse(fundamentals.SplitsDividends?.ForwardAnnualDividendYield)! * 100 : 
+                  (parse(highlights.DividendYield) ? parse(highlights.DividendYield)! * 100 : 0),
     dividendGrowthRate: null, // Would need historical dividend data
     payoutRatio: payoutRatio,
     

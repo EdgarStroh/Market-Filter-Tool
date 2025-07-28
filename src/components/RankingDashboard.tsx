@@ -55,7 +55,8 @@ export const RankingDashboard = ({ visible }: RankingDashboardProps) => {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          {/* <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto"> */}
+      <TabsList className="grid w-full grid-cols-3 h-auto">
             <TabsTrigger value="top300" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
               <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">Top 300</span>
@@ -71,11 +72,11 @@ export const RankingDashboard = ({ visible }: RankingDashboardProps) => {
               <span className="hidden sm:inline">Dividends</span>
               <span className="sm:hidden">Dividends</span>
             </TabsTrigger>
-            <TabsTrigger value="upside" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+            {/* <TabsTrigger value="upside" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
               <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">Upside</span>
               <span className="sm:hidden">Upside</span>
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="top300" className="mt-6">
@@ -121,14 +122,14 @@ export const RankingDashboard = ({ visible }: RankingDashboardProps) => {
               description="Highest dividend yielding stocks ranked by dividend yield"
             />
           </TabsContent>
-
+{/* 
           <TabsContent value="upside" className="mt-6">
             <RankingsList 
               listType="upside" 
               title="Top 300 Highest Upside"
               description="Companies with highest upside potential ranked by target price upside"
             />
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </CardContent>
     </Card>
