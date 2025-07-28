@@ -84,7 +84,7 @@ export const CompanySearch = ({ onStockSelect, onShowTopTen, onBatchAnalysisComp
           exchangeLabel
         }));
     } catch (error) {
-      console.error(`Error loading tickers for ${exchangeLabel}:`, error);
+      // console.error(`Error loading tickers for ${exchangeLabel}:`, error);
       return [];
     }
   };
@@ -106,7 +106,7 @@ export const CompanySearch = ({ onStockSelect, onShowTopTen, onBatchAnalysisComp
       
       return allTickers;
     } catch (error) {
-      console.error('Error loading tickers:', error);
+      // console.error('Error loading tickers:', error);
       return [];
     }
   };
@@ -152,7 +152,7 @@ export const CompanySearch = ({ onStockSelect, onShowTopTen, onBatchAnalysisComp
           });
         }
       } catch (error) {
-        console.error('Error loading companies:', error);
+        // console.error('Error loading companies:', error);
         toast({
           title: "Error Loading Companies",
           description: "Failed to load company list. Using fallback data.",
@@ -232,7 +232,7 @@ export const CompanySearch = ({ onStockSelect, onShowTopTen, onBatchAnalysisComp
       }
 
     } catch (error) {
-      console.error('Vollständige Analyse fehlgeschlagen:', error);
+      // console.error('Vollständige Analyse fehlgeschlagen:', error);
       toast({
         title: "Analyse fehlgeschlagen",
         description: "Einige Unternehmen konnten nicht analysiert werden. Details in der Konsole.",

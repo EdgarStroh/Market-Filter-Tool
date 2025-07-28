@@ -59,7 +59,7 @@ export const RankingsList = ({ listType, title, description }: RankingsListProps
       
       setResults(validResults);
     } catch (error) {
-      console.error(`Failed to load results for ${listType}:`, error);
+      // console.error(`Failed to load results for ${listType}:`, error);
       setResults([]);
     } finally {
       setIsLoading(false);

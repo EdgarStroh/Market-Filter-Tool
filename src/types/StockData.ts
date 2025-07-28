@@ -4,6 +4,7 @@ export interface StockData {
   name: string;
   sector: string;
   industry?: string;
+  isin?: string;
   price: number;
   
   // Valuation Metrics

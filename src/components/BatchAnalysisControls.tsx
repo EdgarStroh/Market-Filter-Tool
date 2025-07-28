@@ -83,7 +83,7 @@ export const BatchAnalysisControls = ({
         onBatchAnalysisComplete();
       }
     } catch (error) {
-      console.error("Batch analysis failed:", error);
+      // console.error("Batch analysis failed:", error);
       toast({
         title: "Analysis failed",
         description:

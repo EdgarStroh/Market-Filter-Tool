@@ -31,7 +31,7 @@ export const RankingDashboard = ({ visible }: RankingDashboardProps) => {
         setSelectedSector(sectors[0]);
       }
     } catch (error) {
-      console.error('Failed to load sectors:', error);
+      // console.error('Failed to load sectors:', error);
     }
   };
 

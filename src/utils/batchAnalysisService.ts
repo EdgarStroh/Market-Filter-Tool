@@ -174,6 +174,7 @@ export const processBatchAnalysis = async (
           name: stockData.name || company.name,
           sector: stockData.sector || company.sector,
           industry: stockData.industry || company.industry,
+          isin: stockData.isin,
           overallScore,
           topStrategy,
           analysisDate: new Date().toISOString(),

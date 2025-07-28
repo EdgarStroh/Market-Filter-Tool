@@ -45,13 +45,14 @@ const safeFormatPercentage = (value: any, decimals: number = 2): string => {
 export const CompanyRankingCard = ({ company, rank }: CompanyRankingCardProps) => {
   return (
     <Card className="hover:shadow-lg transition-shadow">
-      <CardContent className="p-1 sm:p-4 md:p-6">
+      <CardContent className="p-3 sm:p-4 md:p-6">
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <RankingIcon index={rank} />
             <div className="min-w-0 flex-1">
               <h3 className="font-bold text-sm sm:text-base md:text-lg truncate">{company.symbol}</h3>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">{company.name}</p>
+              {company.isin && <p className="text-xs text-muted-foreground/80">ISIN: {company.isin}</p>}
             </div>
           </div>
           <ScoreBadge score={company.overallScore} />

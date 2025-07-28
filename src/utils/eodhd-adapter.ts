@@ -318,6 +318,7 @@ export const convertEODHDToStockData = (symbol: string, fundamentals: EODHDFunda
     name: general.Name || `${symbol} Company`,
     sector: general.Sector || "Unknown",
     industry: general.Industry,
+    isin: general.ISIN,
     price: currentPrice,
     
     // Valuation Metrics

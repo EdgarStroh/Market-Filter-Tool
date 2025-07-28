@@ -3,6 +3,7 @@ export interface CompanyResult {
   name: string;
   sector: string;
   industry?: string;
+  isin?: string;
   overallScore: number;
   topStrategy: string;
   analysisDate: string;
@@ -12,7 +13,7 @@ export interface CompanyResult {
   upside?: number;
 }
 
-const FIREBASE_URL = 'https://fundamental-analysis-tool-default-rtdb.europe-west1.firebasedatabase.app';
+const FIREBASE_URL = 'https://market-filter-tool-default-rtdb.europe-west1.firebasedatabase.app';
 
 export const saveToFirebase = async (result: CompanyResult): Promise<void> => {
   try {
@@ -297,7 +298,7 @@ export const loadFromFirebase = async (listType: 'top300' | 'dividends' | 'upsid
     // console.log(`Loaded and sorted data from Firebase (${listType}):`, sortedResults);
     return sortedResults;
   } catch (error) {
-    console.error('Error loading from Firebase:', error);
+    // console.error('Error loading from Firebase:', error);
     throw error;
   }
 };
@@ -313,7 +314,7 @@ export const loadAllSectors = async (): Promise<string[]> => {
     const data = await response.json();
     return data ? Object.keys(data) : [];
   } catch (error) {
-    console.error('Error loading sectors from Firebase:', error);
+    // console.error('Error loading sectors from Firebase:', error);
     return [];
   }
 };

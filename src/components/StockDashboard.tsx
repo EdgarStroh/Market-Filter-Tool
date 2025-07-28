@@ -73,6 +73,7 @@ export const StockDashboard = ({ symbol, onAnalysisComplete, onClose }: StockDas
       name: data.name,
       sector: data.sector,
       industry: data.industry || "Software",
+      isin: data.isin,
       overallScore,
       topStrategy,
       analysisDate: new Date().toISOString(),
@@ -245,6 +246,7 @@ export const StockDashboard = ({ symbol, onAnalysisComplete, onClose }: StockDas
                   <div className="text-xs md:text-sm text-muted-foreground mt-1 flex flex-col md:flex-row md:gap-2">
                     <span>Sector: {stockData.sector}</span>
                     {stockData.industry && <span className="md:before:content-['|'] md:before:mr-2">Industry: {stockData.industry}</span>}
+                    {stockData.isin && <span className="md:before:content-['|'] md:before:mr-2">ISIN: {stockData.isin}</span>}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

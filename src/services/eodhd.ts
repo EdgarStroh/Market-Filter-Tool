@@ -23,6 +23,7 @@ export interface EODHDFundamentals {
     Industry?: string;
     MarketCapitalization?: number;
     SharesOutstanding?: number;
+    ISIN?: string;
   };
   SharesStats?: {
     SharesOutstanding?: number;
@@ -96,7 +97,7 @@ export const fetchExchangeSymbols = async (exchange: string = 'US'): Promise<EOD
     const data = await response.json();
     return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.error('Error fetching exchange symbols:', error);
+    // console.error('Error fetching exchange symbols:', error);
     return [];
   }
 };
@@ -114,7 +115,7 @@ export const fetchCompanyFundamentals = async (symbol: string): Promise<EODHDFun
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching company fundamentals:', error);
+    // console.error('Error fetching company fundamentals:', error);
     return null;
   }
 };
@@ -128,7 +129,7 @@ export const fetchRealTimePrice = async (symbol: string): Promise<number | null>
     const data = await response.json();
     return data.close || data.previousClose || null;
   } catch (error) {
-    console.error('Error fetching real-time price:', error);
+    // console.error('Error fetching real-time price:', error);
     return null;
   }
 };
