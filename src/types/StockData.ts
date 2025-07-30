@@ -73,4 +73,6 @@ export interface StockData {
   
   // Additional Dividend Data
   dividendsPerShare: number | null;
+   lastYearDividendPayments: number | null;
+  avg5YDividendPayments: number | null;
 }

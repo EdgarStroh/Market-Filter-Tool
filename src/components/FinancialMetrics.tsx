@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign, Percent, BarChart3, PieChart } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Percent, BarChart3, PieChart, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { StockData } from "@/types/StockData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -52,7 +52,9 @@ export const FinancialMetrics = ({ data }: FinancialMetricsProps) => {
       'beta': 'Measures stock volatility relative to market. 1.0 = market volatility.',
       'bookValuePerShare': 'Company\'s book value divided by shares outstanding. Higher indicates more asset backing.',
       'tangibleBookValue': 'Book value minus intangible assets. Represents real, physical asset value.',
-      'cashPerShare': 'Total cash and short-term investments divided by shares outstanding.'
+    'cashPerShare': 'Total cash and short-term investments divided by shares outstanding.',
+      'lastYearDividendPayments': 'Number of dividend payments made in the last year (2024).',
+      'avg5YDividendPayments': 'Average number of dividend payments per year over the last 5 years (2020-2024).'
     };
     
     return tooltips[metricName] || `${metricName} metric information`;
@@ -138,6 +140,8 @@ export const FinancialMetrics = ({ data }: FinancialMetricsProps) => {
       title: "Growth & Dividends",
       items: [
         { label: t('metrics.dividendYield'), value: formatPercent(data.dividendYield), icon: Percent, key: 'dividendYield' },
+         { label: "Last Year Dividend Payments", value: data.lastYearDividendPayments !== null ? `${data.lastYearDividendPayments}` : "N/A", icon: TrendingUp, key: 'lastYearDividendPayments' },
+        { label: "5Y Avg Dividend Payments", value: data.avg5YDividendPayments !== null ? `${data.avg5YDividendPayments.toFixed(1)}` : "N/A", icon: Calendar, key: 'avg5YDividendPayments' },
         { label: "Dividend Growth", value: formatPercent(data.dividendGrowthRate), icon: data.dividendGrowthRate && data.dividendGrowthRate > 0 ? TrendingUp : TrendingDown, key: 'dividendGrowth' },
         { label: "Payout Ratio", value: formatPercent(data.payoutRatio), icon: Percent, key: 'payoutRatio' },
         { label: "5Y Earnings Growth", value: formatPercent(data.earningsGrowth5Y), icon: data.earningsGrowth5Y && data.earningsGrowth5Y > 0 ? TrendingUp : TrendingDown, key: 'earningsGrowth5Y' },

@@ -271,6 +271,29 @@ export const convertEODHDToStockData = (symbol: string, fundamentals: EODHDFunda
   const peRatio = parse(highlights.PERatio) || parse(valuation.TrailingPE);
   const bestEarningsGrowth = getBestEarningsGrowth(fundamentals);
   
+    const dividendPayments = (fundamentals as any).SplitsDividends?.NumberDividendsByYear;
+  let lastYearDividendPayments: number | null = null;
+  let avg5YDividendPayments: number | null = null;
+
+  if (dividendPayments) {
+    // Find last year (2024) dividend payments
+    const lastYearEntry = Object.values(dividendPayments).find((entry: any) => entry.Year === 2024);
+    lastYearDividendPayments = lastYearEntry ? (lastYearEntry as any).Count : null;
+
+    // Calculate 5-year average (2020-2024)
+    const last5Years = [2020, 2021, 2022, 2023, 2024];
+    const last5YearsCounts = last5Years
+      .map(year => {
+        const entry = Object.values(dividendPayments).find((entry: any) => entry.Year === year);
+        return entry ? (entry as any).Count : 0;
+      })
+      .filter(count => count > 0);
+
+    if (last5YearsCounts.length > 0) {
+      avg5YDividendPayments = last5YearsCounts.reduce((sum, count) => sum + count, 0) / last5YearsCounts.length;
+    }
+  }
+
   let pegRatioCalculated = null;
   if (peRatio && peRatio > 0 && bestEarningsGrowth !== null) {
     // Allow calculation even with negative growth
@@ -397,5 +420,7 @@ export const convertEODHDToStockData = (symbol: string, fundamentals: EODHDFunda
     
     // Additional Dividend Data
     dividendsPerShare: parse(fundamentals.SplitsDividends?.ForwardAnnualDividendRate) || null,
+    lastYearDividendPayments,
+    avg5YDividendPayments,
   };
 };
