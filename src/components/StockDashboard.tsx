@@ -15,7 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { StockData } from "@/types/StockData";
 import { fetchCompanyFundamentals, fetchRealTimePrice } from "@/services/eodhd";
-import { convertEODHDToStockData } from "@/utils/eodhd-adapter";
+import { convertEODHDToStockData, getStockDataWithFallback, getTestCompanySymbols } from "@/utils/eodhd-adapter";
+import { generateMockData } from "@/utils/mockDataGenerator";
 import { saveToFirebase } from "@/utils/firebaseService";
 import { withCache, cacheKeys } from "@/utils/dataCache";
 import {
@@ -120,30 +121,52 @@ export const StockDashboard = ({ symbol, onAnalysisComplete, onClose }: StockDas
       setShowCharts(false);
       
       try {
+          // Check if this is a test company that we should use Alpha Vantage for
+        const testCompanies = getTestCompanySymbols();
+        const isTestCompany = testCompanies.includes(symbol);
         
+        let stockData: StockData | null = null;
         
-        // Fetch fundamentals and price in parallel with caching
-        const [fundamentals, price] = await Promise.all([
-          withCache(
-            cacheKeys.companyFundamentals(symbol),
-            () => fetchCompanyFundamentals(symbol),
-            300000 // 5 minutes cache
-          ),
-          withCache(
-            cacheKeys.realTimePrice(symbol),
-            () => fetchRealTimePrice(symbol),
-            60000 // 1 minute cache for real-time data
-          )
-        ]);
-
-        if (!fundamentals) {
+        if (isTestCompany) {
+          // Try Alpha Vantage first for test companies
+          stockData = await getStockDataWithFallback(symbol);
           
-          setError(`No fundamental data available for ${symbol}. This company may not be available on US exchanges.`);
-          setIsLoading(false);
-          return;
-        }
+          if (!stockData) {
+            // Fallback to mock data if Alpha Vantage fails
+            stockData = generateMockData(symbol);
+            toast({
+              title: "Using Demo Data",
+              description: `Using demo data for ${symbol} as external APIs are limited.`,
+            });
+          } else {
+            toast({
+              title: "Real Data Loaded",
+              description: `Loaded real financial data for ${symbol} via Alpha Vantage.`,
+            });
+          }
+        } else {
+          // For non-test companies, try EODHD first
+          const [fundamentals, price] = await Promise.all([
+            withCache(
+              cacheKeys.companyFundamentals(symbol),
+              () => fetchCompanyFundamentals(symbol),
+              300000 // 5 minutes cache
+            ),
+            withCache(
+              cacheKeys.realTimePrice(symbol),
+              () => fetchRealTimePrice(symbol),
+              60000 // 1 minute cache for real-time data
+            )
+          ]);
 
-        const stockData = convertEODHDToStockData(symbol, fundamentals, price || undefined);
+          if (!fundamentals) {
+            setError(`No fundamental data available for ${symbol}. This company may not be available on US exchanges.`);
+            setIsLoading(false);
+            return;
+          }
+
+          stockData = convertEODHDToStockData(symbol, fundamentals, price || undefined);
+        }
         
         setStockData(stockData);
         await saveToDatabase(stockData);

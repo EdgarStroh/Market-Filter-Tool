@@ -107,6 +107,9 @@ export const generateMockData = (symbol: string): StockData => {
     dividendsPerShare: seededRandom(hash + 42, 0, price * 0.1),
        lastYearDividendPayments: Math.round(seededRandom(hash + 43, 0, 12)),
     avg5YDividendPayments: seededRandom(hash + 44, 0, 12),
+
+      // Free Cash Flow CAGR
+    freeCashFlowCAGR: seededRandom(hash + 45, -5, 20),
   };
 };
 

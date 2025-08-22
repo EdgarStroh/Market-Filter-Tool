@@ -75,4 +75,8 @@ export interface StockData {
   dividendsPerShare: number | null;
    lastYearDividendPayments: number | null;
   avg5YDividendPayments: number | null;
+
+    // Free Cash Flow CAGR
+  freeCashFlowCAGR: number | null;
+
 }

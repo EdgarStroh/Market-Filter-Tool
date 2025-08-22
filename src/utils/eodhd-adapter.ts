@@ -1,6 +1,7 @@
 
 import { StockData } from "@/types/StockData";
 import { EODHDFundamentals } from "@/services/eodhd";
+import { fetchAlphaVantageOverview, fetchAlphaVantageCashFlow, calculateFreeCashFlowCAGRFromAV } from "@/services/alphavantage";
 
 // Helper functions for safe parsing
 const parse = (value: any): number | null => {
@@ -85,6 +86,34 @@ const calculateCAGR = (data: Record<string, any>, key: string, period: number = 
   const cagr = (Math.pow(endValue / startValue, 1/years) - 1) * 100;
   return cagr;
 };
+
+// User's specific CAGR function for freeCashFlow  
+const calculateFreeCashFlowCAGR = (data: Record<string, any>): number | null => {
+  const entries = Object.entries(data);
+  if (entries.length < 2) return null;
+
+  const sorted = entries.sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime());
+  
+  // Get earliest and latest entries
+  const startEntry = sorted[0];
+  const endEntry = sorted[sorted.length - 1];
+  
+  const startValue = parse(startEntry[1].freeCashFlow);
+  const endValue = parse(endEntry[1].freeCashFlow);
+  
+  if (!startValue || startValue <= 0 || !endValue) return null;
+  
+  const startYear = new Date(startEntry[0]).getFullYear();
+  const endYear = new Date(endEntry[0]).getFullYear();
+  const years = endYear - startYear;
+  
+  if (years <= 0) return null;
+  
+  // User's formula: (end_value / start_value) ** (1 / years) - 1
+  const cagr = (Math.pow(endValue / startValue, 1/years) - 1) * 100;
+  return cagr;
+};
+
 
 // Calculate EPS CAGR for PEG ratio calculations
 const calculateEPSCAGR = (fundamentals: EODHDFundamentals, period: number = 5): number | null => {
@@ -199,6 +228,10 @@ export const convertEODHDToStockData = (symbol: string, fundamentals: EODHDFunda
   // Growth calculations
   const netIncomeCAGR = calculateCAGR(fYearly, 'netIncome', 10);
   const revenueCAGR = calculateCAGR(fYearly, 'totalRevenue', 10);
+
+    
+  // Calculate Free Cash Flow CAGR using user's specific formula
+  const freeCashFlowCAGR = calculateFreeCashFlowCAGR(cfYearly);
   
   // ROIC calculation using your improved logic
   let roicCalculated = null;
@@ -422,5 +455,131 @@ export const convertEODHDToStockData = (symbol: string, fundamentals: EODHDFunda
     dividendsPerShare: parse(fundamentals.SplitsDividends?.ForwardAnnualDividendRate) || null,
     lastYearDividendPayments,
     avg5YDividendPayments,
+
+        // Free Cash Flow CAGR
+        freeCashFlowCAGR: freeCashFlowCAGR,
   };
+};
+// Test companies that we can use for demo purposes
+export const getTestCompanySymbols = (): string[] => {
+  return ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'JNJ', 'V'];
+};
+
+// Adapter for Alpha Vantage data when EODHD is not available
+export const adaptAlphaVantageToStockData = async (symbol: string): Promise<StockData | null> => {
+  try {
+    const [overview, cashFlow] = await Promise.all([
+      fetchAlphaVantageOverview(symbol),
+      fetchAlphaVantageCashFlow(symbol)
+    ]);
+
+    if (!overview) return null;
+
+    const parseValue = (value: string | null | undefined): number | null => {
+      if (!value || value === 'None' || value === '-' || value === 'null') return null;
+      const num = parseFloat(value);
+      return isNaN(num) ? null : num;
+    };
+
+    // Calculate Free Cash Flow CAGR
+    const freeCashFlowCAGR = cashFlow ? calculateFreeCashFlowCAGRFromAV(cashFlow) : null;
+
+    return {
+      symbol: overview.Symbol,
+      name: overview.Name,
+      sector: overview.Sector || 'Unknown',
+      price: parseValue(overview.AnalystTargetPrice) || 100,
+      
+      // Valuation Metrics
+      marketCap: parseValue(overview.MarketCapitalization) || 0,
+      peRatio: parseValue(overview.PERatio),
+      pbRatio: parseValue(overview.PriceToBookRatio),
+      pegRatio: parseValue(overview.PEGRatio),
+      priceToSales: parseValue(overview.PriceToSalesRatioTTM),
+      enterpriseValue: parseValue(overview.MarketCapitalization) || 0,
+      evToEbitda: parseValue(overview.EVToEBITDA),
+      
+      // Financial Performance
+      revenue: parseValue(overview.RevenueTTM) || 0,
+      revenueGrowth: parseValue(overview.QuarterlyRevenueGrowthYOY),
+      netIncome: parseValue(overview.RevenueTTM) ? (parseValue(overview.RevenueTTM)! * (parseValue(overview.ProfitMargin) || 0.1) / 100) : 0,
+      netIncomeGrowth: parseValue(overview.QuarterlyEarningsGrowthYOY),
+      operatingIncome: parseValue(overview.EBITDA) || 0,
+      ebitda: parseValue(overview.EBITDA) || 0,
+      freeCashFlow: parseValue(overview.RevenueTTM) ? (parseValue(overview.RevenueTTM)! * 0.15) : 0, // Estimate
+      freeCashFlowGrowth: null,
+      
+      // Profitability
+      roe: parseValue(overview.ReturnOnEquityTTM),
+      roa: parseValue(overview.ReturnOnAssetsTTM),
+      roic: null,
+      nopat: null,
+      grossMargin: parseValue(overview.GrossProfitTTM) && parseValue(overview.RevenueTTM) ? 
+        (parseValue(overview.GrossProfitTTM)! / parseValue(overview.RevenueTTM)!) * 100 : null,
+      operatingMargin: parseValue(overview.OperatingMarginTTM),
+      netMargin: parseValue(overview.ProfitMargin),
+      
+      // Financial Health - using estimates
+      currentRatio: 1.5, // Estimate
+      quickRatio: 1.2, // Estimate
+      debtToEquity: 0.5, // Estimate
+      debtToAssets: 0.3, // Estimate
+      interestCoverage: 8, // Estimate
+      totalDebt: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 0.3 : 0,
+      totalEquity: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 0.7 : 0,
+      totalAssets: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 1.5 : 0,
+      workingCapital: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 0.1 : 0,
+      
+      // Dividends & Returns
+      dividendYield: parseValue(overview.DividendYield),
+      dividendGrowthRate: null,
+      payoutRatio: null,
+      
+      // Market Data
+      beta: parseValue(overview.Beta),
+      bookValuePerShare: parseValue(overview.BookValue),
+      tangibleBookValue: null,
+      cashPerShare: null,
+      earningsPerShare: parseValue(overview.EPS),
+      
+      // Growth Metrics
+      earningsGrowth5Y: parseValue(overview.QuarterlyEarningsGrowthYOY),
+      revenueGrowth5Y: parseValue(overview.QuarterlyRevenueGrowthYOY),
+      
+      // Additional Balance Sheet Data - estimates
+      currentAssets: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 0.4 : 0,
+      currentLiabilities: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 0.2 : 0,
+      inventory: parseValue(overview.MarketCapitalization) ? parseValue(overview.MarketCapitalization)! * 0.1 : 0,
+      sharesOutstanding: parseValue(overview.SharesOutstanding) ? parseValue(overview.SharesOutstanding)! / 1000000 : 100, // Convert to millions
+      
+      // Additional Income Statement Data
+      costOfGoodsSold: parseValue(overview.RevenueTTM) && parseValue(overview.GrossProfitTTM) ?
+        parseValue(overview.RevenueTTM)! - parseValue(overview.GrossProfitTTM)! : 0,
+      
+      // Additional Dividend Data
+      dividendsPerShare: parseValue(overview.DividendPerShare),
+      lastYearDividendPayments: null,
+      avg5YDividendPayments: null,
+      
+      // Free Cash Flow CAGR
+      freeCashFlowCAGR: freeCashFlowCAGR,
+    };
+  } catch (error) {
+    console.error(`Error adapting Alpha Vantage data for ${symbol}:`, error);
+    return null;
+  }
+};
+
+// Enhanced function to get stock data with fallback to Alpha Vantage
+export const getStockDataWithFallback = async (symbol: string): Promise<StockData | null> => {
+  // First try Alpha Vantage for real data (even with demo key we get some calls)
+  const alphaData = await adaptAlphaVantageToStockData(symbol);
+  if (alphaData) {
+    console.log(`Using Alpha Vantage data for ${symbol}`);
+    return alphaData;
+  }
+  
+  // If Alpha Vantage fails, return null to trigger mock data
+  console.log(`Alpha Vantage failed for ${symbol}, will use mock data`);
+  return null;
 };

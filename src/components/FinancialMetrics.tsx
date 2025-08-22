@@ -145,6 +145,7 @@ export const FinancialMetrics = ({ data }: FinancialMetricsProps) => {
         { label: "Dividend Growth", value: formatPercent(data.dividendGrowthRate), icon: data.dividendGrowthRate && data.dividendGrowthRate > 0 ? TrendingUp : TrendingDown, key: 'dividendGrowth' },
         { label: "Payout Ratio", value: formatPercent(data.payoutRatio), icon: Percent, key: 'payoutRatio' },
         { label: "5Y Earnings Growth", value: formatPercent(data.earningsGrowth5Y), icon: data.earningsGrowth5Y && data.earningsGrowth5Y > 0 ? TrendingUp : TrendingDown, key: 'earningsGrowth5Y' },
+         { label: "Free Cash Flow CAGR", value: formatPercent(data.freeCashFlowCAGR), icon: data.freeCashFlowCAGR && data.freeCashFlowCAGR > 0 ? TrendingUp : TrendingDown, key: 'freeCashFlowCAGR' },
         { label: "5Y Revenue Growth", value: formatPercent(data.revenueGrowth5Y), icon: data.revenueGrowth5Y && data.revenueGrowth5Y > 0 ? TrendingUp : TrendingDown, key: 'revenueGrowth5Y' },
         { label: "Beta", value: formatRatio(data.beta), icon: PieChart, key: 'beta' },
       ]
